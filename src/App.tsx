@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Player from './player'
 import React from 'react'
 import { videos, colorBars } from './videosData'
@@ -7,22 +7,21 @@ import styles from './App.module.css'
 
 const arraySize = videos.length;
 
-videos.sort(() => (Math.random() > arraySize / 10) ? 1 : -1)
+const sortPlaylist = () => {
+  videos.sort(() => (Math.random() > arraySize / 10) ? 1 : -1)
+}
 
 function App() {
 
   const [index, setIndex] = useState(0);
   const [video, setVideo] = useState(colorBars);
   const [loopOn, setLoopOn] = useState(true);
-  const [ disableBtn, setDisableBtn ] = useState(false);
+  const [disableBtn, setDisableBtn] = useState(false);
+  const [startBtn, setStartBtn] = useState(true);
+  const [ volume, setVolume ] = useState(0.10);
 
   const countdownRef = React.createRef<any>();
   const ref = React.createRef<any>();
-
-  const start = () => {
-    ref.current.volume = 0.05;
-    ref.current.play();
-  }
 
   const onEnd = () => {
     if (index === arraySize - 1) {
@@ -50,6 +49,9 @@ function App() {
 
   const startClock = (time: number) => {
     if (time > 0) {
+      ref.current.volume = volume;
+      sortPlaylist();
+      setStartBtn(false)
       setDisableBtn(true);
       setLoopOn(false);
       setVideo(videos[0])
@@ -59,6 +61,7 @@ function App() {
   }
 
   const stopClock = () => {
+    setStartBtn(true)
     setLoopOn(true);
     countdownRef.current.stop();
     ref.current.pause();
@@ -68,12 +71,18 @@ function App() {
   const onHandleComplete = () => {
     setDisableBtn(false)
     stopClock();
-}
+  }
+
+  const onHandleVolume = (target: HTMLInputElement) => {
+    setVolume(parseFloat(target.value))
+    ref.current.volume = target.value;
+  }
 
   return (
 
     <main className={styles.container}>
       <Player
+        isMuted={false}
         video={video}
         onEnd={onEnd}
         ref={ref}
@@ -85,6 +94,9 @@ function App() {
         onHandleComplete={onHandleComplete}
         onHandleStartClick={startClock}
         onHandleStopClick={stopClock}
+        startBtn={startBtn}
+        onHandleVolume={onHandleVolume}
+        volume={volume}
       />
     </main>
 

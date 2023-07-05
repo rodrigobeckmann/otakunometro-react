@@ -6,9 +6,10 @@ type PlayerProps = {
     video: string,
     onEnd: () => void,
     loopOn: boolean,
+    isMuted: boolean,
 }
 
-const Player = React.forwardRef(({ video, onEnd, loopOn }: PlayerProps, ref: any,) => {
+const Player = React.forwardRef(({ video, onEnd, loopOn, isMuted }: PlayerProps, ref: any,) => {
 
     return (
         <div>
@@ -17,7 +18,7 @@ const Player = React.forwardRef(({ video, onEnd, loopOn }: PlayerProps, ref: any
                 className={styles.videoPlayer}
                 id="video-player"
                 controls
-                muted
+                muted={isMuted}
                 loop={loopOn}
                 onEnded={() => onEnd()}>
                 <source src={video} type='video/webm' />
