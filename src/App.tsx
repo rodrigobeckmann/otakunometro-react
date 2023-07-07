@@ -42,11 +42,9 @@ function App() {
 
   const onEnd = () => {
     if (index === arraySize - 1) {
-      console.log('ssaa')
       setIndex(0)
       setVideo(videos[0])
     } else {
-      console.log('ss')
       setIndex((index) => index + 1);
       setVideo(videos[index + 1])
     }
