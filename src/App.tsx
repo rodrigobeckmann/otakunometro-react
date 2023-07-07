@@ -80,7 +80,6 @@ function App() {
 
   useEffect(() => {
     fixedDate.setTime(startDate)
-    console.log(fixedDate)
   },)
 
 

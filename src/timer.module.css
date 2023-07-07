@@ -60,7 +60,7 @@
 .volumeRange {
     display: flex;
     flex-direction: column;
-    height: 5vh;
+    height: 10vh;
     color: white;
     justify-content: center;
     font-family: 'Belanosima', sans-serif;
