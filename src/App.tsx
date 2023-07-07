@@ -4,12 +4,27 @@ import React from 'react'
 import { videos, colorBars } from './videosData'
 import Clock from './timer'
 import styles from './App.module.css'
+import Swal from 'sweetalert2'
+import { zeroPad } from "react-countdown";
+import sound from './assets/alert.mp3'
+
+type RendererProps = {
+  minutes: number,
+  seconds: number,
+}
 
 const arraySize = videos.length;
 
-const sortPlaylist = () => {
-  videos.sort(() => (Math.random() > arraySize / 10) ? 1 : -1)
+const sortPlaylist = (playList: string[]) => {
+  for (let i = playList.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = playList[i];
+    playList[i] = playList[j];
+    playList[j] = temp;
+  }
 }
+
+const fixedDate = new Date();
 
 function App() {
 
@@ -18,7 +33,8 @@ function App() {
   const [loopOn, setLoopOn] = useState(true);
   const [disableBtn, setDisableBtn] = useState(false);
   const [startBtn, setStartBtn] = useState(true);
-  const [ volume, setVolume ] = useState(0.10);
+  const [volume, setVolume] = useState(0.10);
+  const [startDate, setStartDate] = useState<number>(Date.now());
 
   const countdownRef = React.createRef<any>();
   const ref = React.createRef<any>();
@@ -49,8 +65,9 @@ function App() {
 
   const startClock = (time: number) => {
     if (time > 0) {
+      setStartDate(Date.now())
       ref.current.volume = volume;
-      sortPlaylist();
+      sortPlaylist(videos);
       setStartBtn(false)
       setDisableBtn(true);
       setLoopOn(false);
@@ -60,7 +77,14 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    fixedDate.setTime(startDate)
+    console.log(fixedDate)
+  },)
+
+
   const stopClock = () => {
+
     setStartBtn(true)
     setLoopOn(true);
     countdownRef.current.stop();
@@ -71,11 +95,27 @@ function App() {
   const onHandleComplete = () => {
     setDisableBtn(false)
     stopClock();
+    new Audio(sound).play()
+    Swal.fire({
+      title: 'Fim do seu intervalo',
+      text: 'Volte a ser produtivo',
+      allowOutsideClick: true,
+      timer: 13000,
+      showConfirmButton: false,
+      timerProgressBar: true,
+    })
   }
 
   const onHandleVolume = (target: HTMLInputElement) => {
     setVolume(parseFloat(target.value))
     ref.current.volume = target.value;
+  }
+
+  const renderer = ({ minutes, seconds }: RendererProps) => {
+
+    return (
+      <span>{zeroPad(minutes)}:{zeroPad(seconds)}</span>
+    )
   }
 
   return (
@@ -97,6 +137,9 @@ function App() {
         startBtn={startBtn}
         onHandleVolume={onHandleVolume}
         volume={volume}
+        renderer={renderer}
+        date={startDate}
+        newDate={() => setStartDate(Date.now())}
       />
     </main>
 

@@ -17,7 +17,6 @@ const Player = React.forwardRef(({ video, onEnd, loopOn, isMuted }: PlayerProps,
                 ref={ref}
                 className={styles.videoPlayer}
                 id="video-player"
-                controls
                 muted={isMuted}
                 loop={loopOn}
                 onEnded={() => onEnd()}>
