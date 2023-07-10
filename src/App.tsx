@@ -1,17 +1,38 @@
 import { useState, useEffect } from 'react'
 import Player from './player'
 import React from 'react'
-import { videos, colorBars } from './videosData'
+import { colorBars } from './videosData'
 import Clock from './timer'
 import styles from './App.module.css'
 import Swal from 'sweetalert2'
 import { zeroPad } from "react-countdown";
 import sound from './assets/alert.mp3'
+import { storage } from './firebase'
+import { ref, list, getDownloadURL } from "firebase/storage";
 
 type RendererProps = {
   minutes: number,
   seconds: number,
 }
+
+const getReferences = async () => {
+  const folderRef = ref(storage, 'playlist');
+  const videosList = await list(folderRef, { maxResults: 100 })
+  return videosList;
+}
+
+const createArrayOfVideos = async () => {
+  const videosArray = [] as string[];
+  const refs = await getReferences();
+  refs.items.map(async (item) => {
+    const videoRef = ref(storage, item.fullPath)
+    const url = await getDownloadURL(videoRef);
+    videosArray.push(url)
+  })
+  return videosArray
+}
+
+const videos = await createArrayOfVideos();
 
 const arraySize = videos.length;
 
