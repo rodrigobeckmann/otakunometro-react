@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react'
-import Player from './player'
+import Player from './components/player'
 import React from 'react'
-import { colorBars } from './videosData'
-import Clock from './timer'
+import Clock from './components/timer'
 import styles from './App.module.css'
 import Swal from 'sweetalert2'
 import { zeroPad } from "react-countdown";
 import sound from './assets/alert.mp3'
-import { storage } from './firebase'
+import { storage } from './services/firebase'
 import { ref, list, getDownloadURL } from "firebase/storage";
 
 type RendererProps = {
@@ -15,6 +14,7 @@ type RendererProps = {
   seconds: number,
 }
 
+const colorBars = 'https://firebasestorage.googleapis.com/v0/b/otakunometro.appspot.com/o/bars.mp4?alt=media&token=8e64e958-f077-402a-9e9c-13040f38962a';
 
 
 const finish = new Audio(sound);
