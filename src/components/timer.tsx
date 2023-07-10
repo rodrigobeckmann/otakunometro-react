@@ -9,7 +9,7 @@ const fiveMin = 300000;
 const oneHour = 3600000 - oneMin;
 
 type ClockProps = {
-    onHandleStartClick: (time: number) => void,
+    onHandleStartClick: () => void,
     onHandleStopClick: () => void,
     disableTimerBtn: boolean,
     onHandleComplete: () => void,
@@ -51,7 +51,7 @@ const Clock = React.forwardRef(({ onHandleStartClick, onHandleStopClick, disable
                     <button disabled={disableTimerBtn} onClick={() => setTime(time >= oneHour - fiveMin ? oneHour : time + fiveMin)} onMouseDown={newDate}>+5</button>
                 </section>
             </section>
-            {startBtn ? <button className={styles.startStopBtn} onClick={() => onHandleStartClick(time)}>Start</button> : <button className={styles.startStopBtn} onClick={() => onHandleStopClick()}>Stop</button>}
+            {startBtn ? <button className={styles.startStopBtn} onClick={() => time > 0 && onHandleStartClick()}>Start</button> : <button className={styles.startStopBtn} onClick={() => onHandleStopClick()}>Stop</button>}
             <label className={styles.volumeRange} htmlFor="volumeRange">Volume
                 <input id="volumeRange" type="range" min={0} max={1} step={0.01} value={volume} onChange={({ target }) => onHandleVolume(target)} />
             </label>

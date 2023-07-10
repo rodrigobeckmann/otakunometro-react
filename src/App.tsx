@@ -6,57 +6,23 @@ import styles from './App.module.css'
 import Swal from 'sweetalert2'
 import { zeroPad } from "react-countdown";
 import sound from './assets/alert.mp3'
-import { storage } from './services/firebase'
-import { ref, list, getDownloadURL } from "firebase/storage";
+import { createArrayOfVideos, sortPlaylist } from './services/videos'
+import { colorBars } from './services/videos'
 
 type RendererProps = {
   minutes: number,
   seconds: number,
 }
 
-const colorBars = 'https://firebasestorage.googleapis.com/v0/b/otakunometro.appspot.com/o/bars.mp4?alt=media&token=8e64e958-f077-402a-9e9c-13040f38962a';
-
-
 const finish = new Audio(sound);
 
-const getReferences = async () => {
-  const folderRef = ref(storage, 'playlist');
-  const videosList = await list(folderRef, { maxResults: 100 })
-  return videosList;
-}
-
-let videos = [] as string[];
-
-const createArrayOfVideos = async () => {
-  const videosArray = [] as string[];
-  const refs = await getReferences();
-  refs.items.map(async (item) => {
-    const videoRef = ref(storage, item.fullPath)
-    const url = await getDownloadURL(videoRef);
-    videosArray.push(url)
-  })
-  videos = videosArray
-}
-
-createArrayOfVideos();
-
-const arraySize = videos.length;
-
-const sortPlaylist = (playList: string[]) => {
-  for (let i = playList.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = playList[i];
-    playList[i] = playList[j];
-    playList[j] = temp;
-  }
-}
-
-
 const fixedDate = new Date();
+
 
 function App() {
 
   const [index, setIndex] = useState(0);
+  const [videos, setVideos] = useState<string[]>([])
   const [video, setVideo] = useState(colorBars);
   const [loopOn, setLoopOn] = useState(true);
   const [disableBtn, setDisableBtn] = useState(false);
@@ -68,7 +34,7 @@ function App() {
   const ref = React.createRef<any>();
 
   const onEnd = () => {
-    if (index === arraySize - 1) {
+    if (index === videos.length - 1) {
       setIndex(0)
       setVideo(videos[0])
     } else {
@@ -77,6 +43,14 @@ function App() {
     }
 
   }
+
+  useEffect(() => {
+    const listVideos = async () => {
+      const arrayOfVideos = await createArrayOfVideos();
+      setVideos(arrayOfVideos);
+    }
+    listVideos();
+  }, [])
 
   useEffect(() => {
 
@@ -89,27 +63,23 @@ function App() {
 
   }, [video])
 
-  const startClock = (time: number) => {
-    if (time > 0) {
-      setStartDate(Date.now())
-      ref.current.volume = volume;
-      sortPlaylist(videos);
-      setStartBtn(false)
-      setDisableBtn(true);
-      setLoopOn(false);
-      setVideo(videos[0])
-      countdownRef.current.start();
-      ref.current.play();
-    }
-  }
-
   useEffect(() => {
     fixedDate.setTime(startDate)
   },)
 
+  const startClock = () => {
+    setStartDate(Date.now())
+    ref.current.volume = volume;
+    sortPlaylist(videos);
+    setStartBtn(false)
+    setDisableBtn(true);
+    setLoopOn(false);
+    setVideo(videos[0])
+    countdownRef.current.start();
+    ref.current.play();
+  }
 
   const stopClock = () => {
-
     setStartBtn(true)
     setLoopOn(true);
     countdownRef.current.stop();
