@@ -15,6 +15,8 @@ type RendererProps = {
   seconds: number,
 }
 
+
+
 const finish = new Audio(sound);
 
 const getReferences = async () => {
@@ -22,6 +24,8 @@ const getReferences = async () => {
   const videosList = await list(folderRef, { maxResults: 100 })
   return videosList;
 }
+
+let videos = [] as string[];
 
 const createArrayOfVideos = async () => {
   const videosArray = [] as string[];
@@ -31,10 +35,10 @@ const createArrayOfVideos = async () => {
     const url = await getDownloadURL(videoRef);
     videosArray.push(url)
   })
-  return videosArray
+  videos = videosArray
 }
 
-const videos = await createArrayOfVideos();
+createArrayOfVideos();
 
 const arraySize = videos.length;
 
