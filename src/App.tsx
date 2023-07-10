@@ -15,6 +15,8 @@ type RendererProps = {
   seconds: number,
 }
 
+const finish = new Audio(sound);
+
 const getReferences = async () => {
   const folderRef = ref(storage, 'playlist');
   const videosList = await list(folderRef, { maxResults: 100 })
@@ -114,7 +116,8 @@ function App() {
   const onHandleComplete = () => {
     setDisableBtn(false)
     stopClock();
-    new Audio(sound).play()
+    finish.load();
+    finish.play();
     Swal.fire({
       title: 'Fim do seu intervalo',
       text: 'Volte a ser produtivo',
@@ -122,6 +125,7 @@ function App() {
       timer: 13000,
       showConfirmButton: false,
       timerProgressBar: true,
+      didClose: () => finish.pause(),
     })
   }
 
