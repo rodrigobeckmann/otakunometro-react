@@ -40,8 +40,6 @@ const createArrayOfVideos = async () => {
 
 createArrayOfVideos();
 
-const arraySize = videos.length;
-
 const sortPlaylist = (playList: string[]) => {
   for (let i = playList.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -68,7 +66,7 @@ function App() {
   const ref = React.createRef<any>();
 
   const onEnd = () => {
-    if (index === arraySize - 1) {
+    if (index === videos.length - 1) {
       setIndex(0)
       setVideo(videos[0])
     } else {
