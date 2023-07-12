@@ -1,4 +1,4 @@
-import { storage } from "./firebase";
+import { storage } from "../../firebase";
 import { ref, list, getDownloadURL } from "firebase/storage";
 
 const getReferences = async () => {
