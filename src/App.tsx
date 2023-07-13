@@ -8,6 +8,9 @@ import { zeroPad } from "react-countdown";
 import sound from './assets/alert.mp3'
 import { createArrayOfVideos, sortPlaylist } from './services/videos'
 import { colorBars } from './services/videos'
+import { useSelector, useDispatch } from 'react-redux'
+import { RootReduxState } from './types'
+import { setTargetTime } from './redux/actions'
 
 type RendererProps = {
   minutes: number,
@@ -15,8 +18,6 @@ type RendererProps = {
 }
 
 const finish = new Audio(sound);
-
-const fixedDate = new Date();
 
 
 function App() {
@@ -28,7 +29,10 @@ function App() {
   const [disableBtn, setDisableBtn] = useState(false);
   const [startBtn, setStartBtn] = useState(true);
   const [volume, setVolume] = useState(0.10);
-  const [startDate, setStartDate] = useState<number>(Date.now());
+
+  const dispatch = useDispatch();
+
+  const rootState = useSelector((state: RootReduxState) => state)
 
   const countdownRef = React.createRef<any>();
   const ref = React.createRef<any>();
@@ -63,12 +67,8 @@ function App() {
 
   }, [video])
 
-  useEffect(() => {
-    fixedDate.setTime(startDate)
-  },)
-
   const startClock = () => {
-    setStartDate(Date.now())
+    // setStartDate(rootState.countdownSetTime)
     ref.current.volume = volume;
     sortPlaylist(videos);
     setStartBtn(false)
@@ -85,6 +85,7 @@ function App() {
     countdownRef.current.stop();
     ref.current.pause();
     setVideo(colorBars)
+    dispatch(setTargetTime(rootState.timerReducer.time, false))
   }
 
   const onHandleComplete = () => {
@@ -135,8 +136,7 @@ function App() {
         onHandleVolume={onHandleVolume}
         volume={volume}
         renderer={renderer}
-        date={startDate}
-        newDate={() => setStartDate(Date.now())}
+        date={rootState.timerReducer.countdownSetTime}
       />
     </main>
 
