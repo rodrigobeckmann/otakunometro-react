@@ -68,7 +68,6 @@ function App() {
   }, [video])
 
   const startClock = () => {
-    // setStartDate(rootState.countdownSetTime)
     ref.current.volume = volume;
     sortPlaylist(videos);
     setStartBtn(false)
